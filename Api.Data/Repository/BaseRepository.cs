@@ -67,7 +67,7 @@ namespace Api.Data.Repository
             {
                 throw new InvalidOperationException("Error generating new ID for entity.", ex);
             }
-            return entity;  
+            return entity;
         }
 
         public virtual async Task<T> UpdateAsync(T entity)
@@ -100,17 +100,18 @@ namespace Api.Data.Repository
 
                 if (result == null)
                     return false;
-                
-            _dbSet.Remove(result);
-            await _context.SaveChangesAsync();  
 
-            return true;    
+                _dbSet.Remove(result);
+                await _context.SaveChangesAsync();
+
+                return true;
             }
             catch (Exception ex)
             {
                 throw new InvalidOperationException("Error deleting entity.", ex);
             }
-          
+
         }
+        
     }
 }
