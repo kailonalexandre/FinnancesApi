@@ -8,10 +8,10 @@ namespace Domain.Entities
 {
     public class InvestmentEntity : BaseEntity
     {
-        public string Name { get; private set; }
-        public decimal InvestedAmount { get; private set; }
-        public decimal CurrentValue { get; private set; }
-        public Guid InvestmentTypeId { get; private set; }
-        public InvestmentTypeEntity InvestmentType { get; private set; }
+        public string? Name { get;  set; }
+        public decimal InvestedAmount { get; set; }
+        public decimal CurrentValue { get; set; }
+        public Guid InvestmentTypeId { get;  set; }
+        public InvestmentTypeEntity? InvestmentType { get; set; }
     }
 }
