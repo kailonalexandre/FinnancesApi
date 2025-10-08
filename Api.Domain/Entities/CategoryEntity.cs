@@ -2,10 +2,10 @@
 {
     public class CategoryEntity : BaseEntity
     {
-        public string? Name { get; private set; }
-        public string? Type { get; private set; } // "Income" or "Expense"
-        public string? Color { get; private set; }
+        public string? Name { get;  set; }
+        public string? Type { get;  set; } // "Income" or "Expense"
+        public string? Color { get;  set; }
 
-        //public ICollection<FinancialAccount> FinancialAccounts { get; private set; }
+        public ICollection<FinancialAccountEntity>? FinancialAccounts { get;  set; }
     }
 }

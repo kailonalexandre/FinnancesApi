@@ -9,11 +9,8 @@ namespace Api.Domain.Interfaces.Services.Account
     {
         Task<FinancialAccountEntity> GetByIdAsync(Guid id);
         Task<IEnumerable<FinancialAccountEntity>> GetAllAsync();
-        Task<FinancialAccountEntity> CreateAsync(FinancialAccountEntity account);
+        Task<FinancialAccountEntity> CreateAsync(FinancialAccountEntity account, Guid CategoryId);
         Task<FinancialAccountEntity> UpdateAsync(FinancialAccountEntity account);
         Task<bool> DeleteAsync(Guid id);
-
-        // Extra: consultar saldo
-        Task<decimal> GetBalanceAsync(int id);
     }
 }

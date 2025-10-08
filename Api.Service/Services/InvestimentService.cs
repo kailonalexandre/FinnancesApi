@@ -1,18 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Api.Domain.Interfaces;
 using Api.Domain.Interfaces.Services.Investiment;
 using Domain.Entities;
 
 namespace Api.Service.Services
 {
-    public class InvestmentService
+    public class InvestmentService : IInvestmentRepository
     {
-        private readonly IInvestmentRepository _repository;
+        private IRepository<InvestmentEntity> _repository;
 
-        public InvestmentService(IInvestmentRepository repository)
+        public InvestmentService(IRepository<InvestmentEntity> repository)
         {
             _repository = repository;
+        }
+
+        public async Task<InvestmentEntity> CreateAsync(InvestmentEntity investment)
+        {
+           return await _repository.InsertAsync(investment);
+        }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+           return await _repository.DeleteAsync(id);
         }
 
         public async Task<IEnumerable<InvestmentEntity>> GetAllAsync()
@@ -25,31 +36,9 @@ namespace Api.Service.Services
             return await _repository.GetByIdAsync(id);
         }
 
-        public async Task<InvestmentEntity> CreateAsync(InvestmentEntity investment)
+        public async Task<InvestmentEntity> UpdateAsync(InvestmentEntity investment)
         {
-            investment.Id = Guid.NewGuid();
-            investment.CreateAt = DateTime.UtcNow;
-            return await _repository.CreateAsync(investment);
-        }
-
-        public async Task<InvestmentEntity?> UpdateAsync(Guid id, InvestmentEntity investment)
-        {
-            var existing = await _repository.GetByIdAsync(id);
-            if (existing == null)
-                return null;
-
-            existing.Name = investment.Name;
-            existing.CurrentValue = investment.CurrentValue;
-            existing.InvestedAmount = investment.InvestedAmount;
-            existing.InvestmentType = investment.InvestmentType;
-            existing.UpdateAt = DateTime.UtcNow;
-
-            return await _repository.UpdateAsync(existing);
-        }
-
-        public async Task<bool> DeleteAsync(Guid id)
-        {
-            return await _repository.DeleteAsync(id);
+           return await _repository.UpdateAsync(investment);
         }
     }
 }

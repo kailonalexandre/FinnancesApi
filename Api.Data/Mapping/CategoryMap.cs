@@ -9,7 +9,6 @@ namespace Data.Mapping
         public void Configure(EntityTypeBuilder<CategoryEntity> builder)
         {
             builder.ToTable("Categories");
-            // Define the primary key for the CategoryEntity
             builder.HasKey(c => c.Id);
 
             builder.Property(c => c.Name)
@@ -23,7 +22,6 @@ namespace Data.Mapping
             builder.Property(c => c.Color)
                 .HasMaxLength(20);
 
-            // Add if not present, and ensure no default value is set
             builder.Property(x => x.CreateAt)
                 .HasColumnType("datetime(6)")
                 .IsRequired(false);

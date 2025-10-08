@@ -1,51 +1,48 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Api.Domain.Interfaces;
 using Api.Domain.Interfaces.Services.Account;
 using Domain.Entities;
 
 
 namespace Api.Service.Services
 {
-    public class FinnancialAccountService
+    public class FinnancialAccountService : IFinnancialAccountRepository
     {
-        private readonly IFinnancialAccountRepository _repository;
+        private IRepository<FinancialAccountEntity> _repository;
 
-        public FinnancialAccountService(IFinnancialAccountRepository repository)
+        public FinnancialAccountService(IRepository<FinancialAccountEntity> repository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public async Task<IEnumerable<FinancialAccountEntity>> GetAllAccountsAsync()
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            return await _repository.GetAllAsync();
+            return await _repository.DeleteAsync(id);
         }
 
-        public async Task<FinancialAccountEntity> GetAccountByIdAsync(Guid id)
+        public async Task<FinancialAccountEntity> GetByIdAsync(Guid id)
         {
             return await _repository.GetByIdAsync(id);
         }
 
-        public async Task<FinancialAccountEntity> CreateAccountAsync(FinancialAccountEntity account)
+        public async Task<IEnumerable<FinancialAccountEntity>> GetAllAsync()
         {
-            if (account == null)
-                throw new ArgumentNullException(nameof(account));
-
-            account.Id = Guid.NewGuid();
-            return await _repository.CreateAsync(account);
+            return await _repository.GetAllAsync();
         }
 
-        public async Task<FinancialAccountEntity> UpdateAccountAsync(FinancialAccountEntity account)
+        public async Task<FinancialAccountEntity> CreateAsync(FinancialAccountEntity account)
+        {
+             return await _repository.InsertAsync(account);
+        }
+
+        public async Task<FinancialAccountEntity> UpdateAsync(FinancialAccountEntity account)
         {
             if (account == null)
                 throw new ArgumentNullException(nameof(account));
 
             return await _repository.UpdateAsync(account);
-        }
-
-        public async Task<bool> DeleteAccountAsync(Guid id)
-        {
-            return await _repository.DeleteAsync(id);
         }
     }
 }

@@ -18,14 +18,7 @@ namespace Data.Mapping
                     
             builder.Property(x => x.CreateAt)
                 .HasColumnType("datetime(6)")
-                .IsRequired(false); // Remove HasDefaultValue(null)
-
-
-            // Relacionamento (se quiser ativar a navegação reversa no futuro):
-            // builder.HasMany<InvestmentEntity>()
-            //     .WithOne(i => i.InvestmentType)
-            //     .HasForeignKey(i => i.InvestmentTypeId)
-            //     .OnDelete(DeleteBehavior.Restrict);
+                .IsRequired(false); 
         }
     }
 }

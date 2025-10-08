@@ -12,8 +12,5 @@ namespace Api.Domain.Interfaces.Services.Investiment
         Task<InvestmentEntity> CreateAsync(InvestmentEntity investment);
         Task<InvestmentEntity> UpdateAsync(InvestmentEntity investment);
         Task<bool> DeleteAsync(Guid id);
-
-        // Extra: simulações ou projeções
-        Task<decimal> GetProjectedReturnAsync(int investmentId, int months);
     }
 }
