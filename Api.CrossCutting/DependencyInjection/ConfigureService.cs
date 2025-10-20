@@ -15,6 +15,7 @@ namespace Api.CrossCutting.DependencyInjection
             serviceColletion.AddTransient<IFinnancialAccountRepository, FinnancialAccountService>();
             serviceColletion.AddTransient<ICategoryRepository, CategoryService>();
             serviceColletion.AddTransient<IInvestmentRepository, InvestmentService>();
+            serviceColletion.AddTransient<ILoginService, LoginService>();
            
         }
     }

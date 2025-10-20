@@ -1,18 +1,20 @@
-using Api.Domain.Interfaces.Services.Investiment;
+using Api.Domain.Interfaces.Services.Account;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace application.Controller
+namespace application.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InvestmentsController : ControllerBase
+    public class FinnancialsController : ControllerBase
     {
-        private IInvestmentRepository _service;
-        public InvestmentsController(IInvestmentRepository service)
+        private IFinnancialAccountRepository _service;
+
+        public FinnancialsController(IFinnancialAccountRepository service)
         {
             _service = service;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -22,18 +24,19 @@ namespace application.Controller
             }
             try
             {
-                var investments = await _service.GetAllAsync();
-                if (investments == null || !investments.Any())
+                var accounts = await _service.GetAllAsync();
+                if (accounts == null || !accounts.Any())
                 {
                     return NoContent(); // 204 - No Content - Requisição bem-sucedida, mas sem conteúdo para retornar
                 }
-                return Ok(investments); // 200 - OK - Requisição bem-sucedida
+                return Ok(accounts); // 200 - OK - Requisição bem-sucedida
             }
             catch (ArgumentException ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message); // 500 - Internal Server Error - Erro interno do servidor
             }
         }
+
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -43,21 +46,21 @@ namespace application.Controller
             }
             try
             {
-                var investment = await _service.GetByIdAsync(id);
-                if (investment == null)
+                var account = await _service.GetByIdAsync(id);
+                if (account == null)
                 {
                     return NoContent(); // 204 - No Content - Requisição bem-sucedida, mas sem conteúdo para retornar
                 }
-                return Ok(investment); // 200 - OK - Requisição bem-sucedida
+                return Ok(account); // 200 - OK - Requisição bem-sucedida
             }
             catch (ArgumentException ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message); // 500 - Internal Server Error - Erro interno do servidor
             }
         }
-
+      
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Domain.Entities.InvestmentEntity investment)
+        public async Task<IActionResult> Post([FromBody] Domain.Entities.FinancialAccountEntity account)
         {
             if (!ModelState.IsValid)
             {
@@ -65,20 +68,16 @@ namespace application.Controller
             }
             try
             {
-                var createdInvestment = await _service.CreateAsync(investment);
-                if (createdInvestment == null)
-                {
-                    return NoContent(); // 204 - No Content - Requisição bem-sucedida, mas sem conteúdo para retornar
-                }
-                return Ok(createdInvestment); // 200 - OK - Requisição bem-sucedida
+                var createdAccount = await _service.CreateAsync(account, account.CategoryId);
+                return CreatedAtAction(nameof(GetById), new { id = createdAccount.Id }, createdAccount); // 201 - Created - Recurso criado com sucesso
             }
             catch (ArgumentException ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message); // 500 - Internal Server Error - Erro interno do servidor
             }
         }
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Put([FromBody] Domain.Entities.InvestmentEntity investment)
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] Domain.Entities.FinancialAccountEntity account)
         {
             if (!ModelState.IsValid)
             {
@@ -86,12 +85,8 @@ namespace application.Controller
             }
             try
             {
-                var updatedInvestment = await _service.UpdateAsync(investment);
-                if (updatedInvestment == null)
-                {
-                    return NoContent(); // 204 - No Content - Requisição bem-sucedida, mas sem conteúdo para retornar
-                }
-                return Ok(updatedInvestment); // 200 - OK - Requisição bem-sucedida
+                var updatedAccount = await _service.UpdateAsync(account);
+                return Ok(updatedAccount); // 200 - OK - Requisição bem-sucedida
             }
             catch (ArgumentException ex)
             {
@@ -107,18 +102,21 @@ namespace application.Controller
             }
             try
             {
-                var result = await _service.DeleteAsync(id);
-                if (!result)
+                var deleted = await _service.DeleteAsync(id);
+                if (deleted)
+                {
+                    return Ok(); // 200 - OK - Requisição bem-sucedida
+                }
+                else
                 {
                     return NotFound(); // 404 - Not Found - Recurso não encontrado
                 }
-                return NoContent(); // 204 - No Content - Requisição bem-sucedida, mas sem conteúdo para retornar
             }
             catch (ArgumentException ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message); // 500 - Internal Server Error - Erro interno do servidor
             }
         }
-
+    
     }
 }

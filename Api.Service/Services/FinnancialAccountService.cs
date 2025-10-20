@@ -32,9 +32,10 @@ namespace Api.Service.Services
             return await _repository.GetAllAsync();
         }
 
-        public async Task<FinancialAccountEntity> CreateAsync(FinancialAccountEntity account)
+        public async Task<FinancialAccountEntity> CreateAsync(FinancialAccountEntity account, Guid CategoryId)
         {
-             return await _repository.InsertAsync(account);
+            account.CategoryId = CategoryId;
+            return await _repository.InsertAsync(account);
         }
 
         public async Task<FinancialAccountEntity> UpdateAsync(FinancialAccountEntity account)

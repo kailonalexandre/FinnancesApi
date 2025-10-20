@@ -1,18 +1,18 @@
-
 using System.Net;
-using Api.Domain.Interfaces.Services.User;
+using Api.Domain.Interfaces.Services.Category;
 using Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Application.Controller
+namespace application.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
+        private ICategoryRepository _service;
 
-        private IUserService _service;
-        public UsersController(IUserService service)
+        public CategoriesController(ICategoryRepository service)
         {
             _service = service;
         }
@@ -26,7 +26,7 @@ namespace Api.Application.Controller
             }
             try
             {
-                var users = await _service.GetAll();
+                var users = await _service.GetAllAsync();
                 if (users == null || !users.Any())
                 {
                     return NoContent(); // 204 - No Content - Requisição bem-sucedida, mas sem conteúdo para retornar
@@ -42,7 +42,7 @@ namespace Api.Application.Controller
         // GET api/users/{id}
 
         [HttpGet]
-        [Route("{id}", Name = "GetUserById")]
+        [Route("{id}", Name = "GetCategoryById")]
         public async Task<IActionResult> GetById(Guid id)
         {
             if (!ModelState.IsValid)
@@ -51,7 +51,7 @@ namespace Api.Application.Controller
             }
             try
             {
-                var user = await _service.Get(id);
+                var user = await _service.GetByIdAsync(id);
                 if (user == null)
                 {
                     return NotFound(); // 404 - Not Found - Recurso não encontrado
@@ -65,7 +65,7 @@ namespace Api.Application.Controller
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] UserEntity user)
+        public async Task<IActionResult> Post([FromBody] CategoryEntity user)
         {
             if (!ModelState.IsValid)
             {
@@ -73,8 +73,8 @@ namespace Api.Application.Controller
             }
             try
             {
-                var createdUser = await _service.Post(user);
-                return CreatedAtRoute("GetUserById", new { id = createdUser.Id }, createdUser); // 201 - Created - Recurso criado com sucesso
+                var createdCategory = await _service.CreateAsync(user);
+                return CreatedAtRoute("GetCategoryById", new { id = createdCategory.Id }, createdCategory); // 201 - Created - Recurso criado com sucesso
             }
             catch (ArgumentException ex)
             {
@@ -83,7 +83,7 @@ namespace Api.Application.Controller
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody] UserEntity user)
+        public async Task<IActionResult> Put([FromBody] CategoryEntity user)
         {
             if (!ModelState.IsValid)
             {
@@ -91,7 +91,7 @@ namespace Api.Application.Controller
             }
             try
             {
-                var updatedUser = await _service.Put(user);
+                var updatedUser = await _service.UpdateAsync(user);
                 if (updatedUser == null)
                 {
                     return NotFound(); // 404 - Not Found - Recurso não encontrado
@@ -103,7 +103,7 @@ namespace Api.Application.Controller
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message); // 500 - Internal Server Error - Erro interno do servidor
             }
         }
-        [HttpDelete ("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             if (!ModelState.IsValid)
@@ -112,7 +112,7 @@ namespace Api.Application.Controller
             }
             try
             {
-                var result = await _service.Delete(id);
+                var result = await _service.DeleteAsync(id);
                 if (!result)
                 {
                     return NotFound(); // 404 - Not Found - Recurso não encontrado

@@ -1,5 +1,7 @@
+using Api.Data.Implementations;
 using Api.Data.Repository;
 using Api.Domain.Interfaces;
+using Api.Domain.Repository;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +13,8 @@ namespace Api.CrossCutting.DependencyInjection
         public static void ConfigureDependenciesRepository(IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            serviceCollection.AddScoped<IUserRepository, UserImplementation>();
+            
             var ServerVersion = new MySqlServerVersion(new Version(9, 3, 0)); // Use your MySQL version here
 
             serviceCollection.AddDbContext<MyContext>(options =>

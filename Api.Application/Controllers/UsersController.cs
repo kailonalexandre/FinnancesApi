@@ -1,18 +1,18 @@
+
 using System.Net;
-using Api.Domain.Interfaces.Services.Category;
+using Api.Domain.Interfaces.Services.User;
 using Domain.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace application.Controller
+namespace Api.Application.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class UsersController : ControllerBase
     {
-        private ICategoryRepository _service;
 
-        public CategoriesController(ICategoryRepository service)
+        private IUserService _service;
+        public UsersController(IUserService service)
         {
             _service = service;
         }
@@ -26,7 +26,7 @@ namespace application.Controller
             }
             try
             {
-                var users = await _service.GetAllAsync();
+                var users = await _service.GetAll();
                 if (users == null || !users.Any())
                 {
                     return NoContent(); // 204 - No Content - Requisição bem-sucedida, mas sem conteúdo para retornar
@@ -42,7 +42,7 @@ namespace application.Controller
         // GET api/users/{id}
 
         [HttpGet]
-        [Route("{id}", Name = "GetCategoryById")]
+        [Route("{id}", Name = "GetUserById")]
         public async Task<IActionResult> GetById(Guid id)
         {
             if (!ModelState.IsValid)
@@ -51,7 +51,7 @@ namespace application.Controller
             }
             try
             {
-                var user = await _service.GetByIdAsync(id);
+                var user = await _service.Get(id);
                 if (user == null)
                 {
                     return NotFound(); // 404 - Not Found - Recurso não encontrado
@@ -65,7 +65,7 @@ namespace application.Controller
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CategoryEntity user)
+        public async Task<IActionResult> Post([FromBody] UserEntity user)
         {
             if (!ModelState.IsValid)
             {
@@ -73,8 +73,8 @@ namespace application.Controller
             }
             try
             {
-                var createdCategory = await _service.CreateAsync(user);
-                return CreatedAtRoute("GetCategoryById", new { id = createdCategory.Id }, createdCategory); // 201 - Created - Recurso criado com sucesso
+                var createdUser = await _service.Post(user);
+                return CreatedAtRoute("GetUserById", new { id = createdUser.Id }, createdUser); // 201 - Created - Recurso criado com sucesso
             }
             catch (ArgumentException ex)
             {
@@ -83,7 +83,7 @@ namespace application.Controller
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody] CategoryEntity user)
+        public async Task<IActionResult> Put([FromBody] UserEntity user)
         {
             if (!ModelState.IsValid)
             {
@@ -91,7 +91,7 @@ namespace application.Controller
             }
             try
             {
-                var updatedUser = await _service.UpdateAsync(user);
+                var updatedUser = await _service.Put(user);
                 if (updatedUser == null)
                 {
                     return NotFound(); // 404 - Not Found - Recurso não encontrado
@@ -103,7 +103,7 @@ namespace application.Controller
                 return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message); // 500 - Internal Server Error - Erro interno do servidor
             }
         }
-        [HttpDelete("{id}")]
+        [HttpDelete ("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             if (!ModelState.IsValid)
@@ -112,7 +112,7 @@ namespace application.Controller
             }
             try
             {
-                var result = await _service.DeleteAsync(id);
+                var result = await _service.Delete(id);
                 if (!result)
                 {
                     return NotFound(); // 404 - Not Found - Recurso não encontrado
